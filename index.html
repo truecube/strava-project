@@ -13,7 +13,8 @@
         returnURL = "http://localhost:"+window.location.port;
     }
     returnURL += "/exchange_token.html"
-    let link = `https://www.strava.com/oauth/authorize?client_id=76724&response_type=code&redirect_uri=${returnURL}&approval_prompt=force&scope=activity:read_all`
+    //let link = `https://www.strava.com/oauth/authorize?client_id=76724&response_type=code&redirect_uri=${returnURL}&approval_prompt=force&scope=activity:read_all`
+    let link = `https://www.strava.com/oauth/authorize?client_id=73172&response_type=code&redirect_uri=${returnURL}&approval_prompt=force&scope=activity:read_all`
     function to_strava() {
         window.location.href=link
     }
