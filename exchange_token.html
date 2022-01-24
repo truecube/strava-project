@@ -23,7 +23,8 @@
         //--------- STEP 2 ------
         //Get Access_token from Strava
         //////////////////////////
-        let link = `https://www.strava.com/oauth/token?client_id=76724&client_secret=68bbb0b199fdfa96891031d0b91a6fb2f3973adc&code=${code}&grant_type=authorization_code`
+        //let link = `https://www.strava.com/oauth/token?client_id=76724&client_secret=68bbb0b199fdfa96891031d0b91a6fb2f3973adc&code=${code}&grant_type=authorization_code`
+        let link = `https://www.strava.com/oauth/token?client_id=73172&client_secret=e61fba5596fa4b374d77cfd71d501fcb2f7b583e&code=${code}&grant_type=authorization_code`
         fetch(link, {
             method: 'post'
         })
