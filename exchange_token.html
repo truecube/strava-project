@@ -13,28 +13,35 @@
     <div id="data"></div>
     <script type="text/javascript">
 
-        //--------- STEP 1 ------
-        //GET CODE FROM THE URL
-        //////////////////////////
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString)
-        const code = urlParams.get('code')
-        
-        //--------- STEP 2 ------
-        //Get Access_token from Strava
-        //////////////////////////
-        //let link = `https://www.strava.com/oauth/token?client_id=76724&client_secret=68bbb0b199fdfa96891031d0b91a6fb2f3973adc&code=${code}&grant_type=authorization_code`
-        let link = `https://www.strava.com/oauth/token?client_id=73172&client_secret=e61fba5596fa4b374d77cfd71d501fcb2f7b583e&code=${code}&grant_type=authorization_code`
-        fetch(link, {
-            method: 'post'
-        })
-        .then(res => res.json())
-        .then(res => get_athlete_info(res.access_token))
+        let token = read_cookie("ac")
+        if(token == "") {
+            
+            //--------- STEP 1 ------
+            //GET CODE FROM THE URL
+            //https://truecube.com/strava_project/exchange_token.html?code=123434fsdgf2
+            //////////////////////////
+            const urlParams = new URLSearchParams(window.location.search)
+            const code = urlParams.get('code')
+            
+            //--------- STEP 2 ------
+            //Get Access_token from Strava
+            //////////////////////////
+            // let link = `https://www.strava.com/oauth/token?client_id=76724&client_secret=68bbb0b199fdfa96891031d0b91a6fb2f3973adc&code=${code}&grant_type=authorization_code`
+            let link = `https://www.strava.com/oauth/token?client_id=73172&client_secret=e61fba5596fa4b374d77cfd71d501fcb2f7b583e&code=${code}&grant_type=authorization_code`
+            fetch(link, {
+                method: 'post'
+            })
+            .then(res => res.json())
+            .then(res => get_athlete_info(res.access_token))
+        } else {
+            get_athlete_info(token)
+        }
 
         //--------- STEP 3 ------
         //GET ATHLETE's INFO
         //////////////////////////
         function get_athlete_info(access_token) {
+            write_cookie("ac",access_token)
             let link="https://www.strava.com/api/v3/athlete"
             fetch(link, {
                 method:'GET',
@@ -62,6 +69,33 @@
             dataHTML += `</table>`
             document.getElementById('data').innerHTML = dataHTML
         }
+
+        //write cookie for name=authentication_code & value=123kaslk123
+        function write_cookie(name, value) {
+            const date = new Date();
+            date.setTime(date.getTime() + (1*24*60*60*1000));
+            let expires = "expires="+ date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        //read the value for name = authentication_token
+        function read_cookie(name) {
+            name = name + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) { //name1=value1
+                let c = ca[i]; //' ac' => 'ac'
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+
+        }
+
     </script>
 </body>
 </html>
