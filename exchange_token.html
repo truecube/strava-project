@@ -18,11 +18,11 @@
         let token = read_cookie("at")
 
         //first check access_token
-        if(token == "" || token == "undefined") {
+        if(token == "" || token == "undefined") { // no access_token
             
             //if empty then check refresh token
             let refresh_token = read_cookie("rt")
-            if(refresh_token == "" || refresh_token == "undefined") {
+            if(refresh_token == "" || refresh_token == "undefined") { //no refresh_token
 
                 //if empty then check code: 
                 //--------- STEP 1 ------
@@ -41,29 +41,29 @@
                     })
                     .then(res => res.json())
                     .then(res => {
-                        write_cookie("at",res.access_token, 1)
-                        write_cookie("rt",res.refresh_token, 30)
+                        write_cookie("at",res.access_token, access_token_expiry_in_days)
+                        write_cookie("rt",res.refresh_token, refresh_token_expiry_in_days)
                         return res
                     })
                     .then(res => get_athlete_info(res.access_token))
-                } else { // return to authorize_page
+                } else { // no code even - so return to authorize_page
                     window.location.href="./"
                 }
-            } else {
+            } else { // refresh_token is available
                 let link=`https://www.strava.com/api/v3/oauth/token?client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}&grant_type=refresh_token`
                 fetch(link, {
                     method:'POST'
                 })
                 .then(res => res.json())
                 .then(res => {
-                    write_cookie("at", res.access_token, 1)
-                    write_cookie("rt", res.refresh_token, 30)
+                    write_cookie("at", res.access_token, access_token_expiry_in_days)
+                    write_cookie("rt", res.refresh_token, refresh_token_expiry_in_days)
                     return res
                 })
                 .then(res => get_athlete_info(res.access_token))
-                .catch(ex => console.log("Exception happened " + ex))
+                .catch(ex => consoleLog("Exception happened " + ex))
             }
-        } else {
+        } else { // access_token is available
             get_athlete_info(token)
         }
 
