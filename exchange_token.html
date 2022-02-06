@@ -94,7 +94,7 @@
             })
             .then(res => res.json())
             .then(res => {
-                console.log(res.errors)
+                consoleLog(res.errors)
                 if(res.errors) {
                     redirect_to_homepage()
                 }
