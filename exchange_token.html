@@ -12,7 +12,8 @@
 </head>
 <body>
     <h2><span id="auth-flow"></span>Here is the athlete's information: </h2>
-    <div id="data"></div>
+    <div id="athelete_info"></div>
+    <div id="athelete_activities_info"></div>
     <script type="text/javascript">
 
         let token = read_cookie(access_token_cookie_name)
@@ -49,7 +50,10 @@
                         write_cookie(refresh_token_cookie_name,res.refresh_token, refresh_token_expiry_in_days)
                         return res
                     })
-                    .then(res => get_athlete_info(res.access_token))
+                    .then(res => {
+                        get_athlete_info(res.access_token)
+                        get_athlete_activities(res.access_token, 0, -30)
+                    })
                     .catch(err => {
                         consoleLog(err)
                         redirect_to_homepage()
@@ -69,7 +73,10 @@
                     write_cookie(refresh_token_cookie_name, res.refresh_token, refresh_token_expiry_in_days)
                     return res
                 })
-                .then(res => get_athlete_info(res.access_token))
+                .then(res => {
+                    get_athlete_info(res.access_token)
+                    get_athlete_activities(res.access_token, 0, -30)
+                })
                 .catch(ex => {
                     consoleLog("Exception happened " + ex)
                     redirect_to_homepage()
@@ -77,6 +84,7 @@
             }
         } else { // access_token is available
             get_athlete_info(token)
+            get_athlete_activities(token, 0, -30)
         }
 
         //--------- STEP 3 ------
@@ -119,7 +127,7 @@
             dataHTML += `<tr><th>State</th><td>${data.state}</td></tr>`
             dataHTML += `<tr><th>ProfilePic</th><td><img src='${data.profile}'/></td></tr>`
             dataHTML += `</table>`
-            document.getElementById('data').innerHTML = dataHTML
+            document.getElementById('athelete_info').innerHTML = dataHTML
         }
 
     </script>
