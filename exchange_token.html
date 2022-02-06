@@ -15,13 +15,13 @@
     <div id="data"></div>
     <script type="text/javascript">
 
-        let token = read_cookie("at")
+        let token = read_cookie(access_token_cookie_name)
 
         //first check access_token
         if(token == "" || token == "undefined") { // no access_token
             
             //if empty then check refresh token
-            let refresh_token = read_cookie("rt")
+            let refresh_token = read_cookie(refresh_token_cookie_name)
             if(refresh_token == "" || refresh_token == "undefined") { //no refresh_token
 
                 //if empty then check code: 
@@ -45,8 +45,8 @@
                         consoleLog("Exception happeend: " + err)
                     })
                     .then(res => {
-                        write_cookie("at",res.access_token, access_token_expiry_in_days)
-                        write_cookie("rt",res.refresh_token, refresh_token_expiry_in_days)
+                        write_cookie(access_token_cookie_name,res.access_token, access_token_expiry_in_days)
+                        write_cookie(refresh_token_cookie_name,res.refresh_token, refresh_token_expiry_in_days)
                         return res
                     })
                     .then(res => get_athlete_info(res.access_token))
@@ -65,8 +65,8 @@
                 .then(res => res.json())
                 .catch(ex => consoleLog("Exception happened " + ex))
                 .then(res => {
-                    write_cookie("at", res.access_token, access_token_expiry_in_days)
-                    write_cookie("rt", res.refresh_token, refresh_token_expiry_in_days)
+                    write_cookie(access_token_cookie_name, res.access_token, access_token_expiry_in_days)
+                    write_cookie(refresh_token_cookie_name, res.refresh_token, refresh_token_expiry_in_days)
                     return res
                 })
                 .then(res => get_athlete_info(res.access_token))
@@ -94,7 +94,10 @@
             })
             .then(res => res.json())
             .then(res => {
-                console.log(res)
+                console.log(res.errors)
+                if(res.errors) {
+                    redirect_to_homepage()
+                }
                 return res
             })
             .then(res => load_data(res))

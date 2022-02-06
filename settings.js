@@ -10,6 +10,9 @@ const client_secret = 'e61fba5596fa4b374d77cfd71d501fcb2f7b583e';
 const refresh_token_expiry_in_days=30
 const access_token_expiry_in_days=1
 
+const access_token_cookie_name = "at"
+const refresh_token_cookie_name = "rt"
+
 const environment = "dev" // "stage", "beta", "prod"
 
 function consoleLog(message) {

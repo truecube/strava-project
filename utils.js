@@ -26,4 +26,6 @@ function read_cookie(name) {
 
 function redirect_to_homepage() {
     window.location.href="./"
+    write_cookie(refresh_token_cookie_name, "", -1)
+    write_cookie(access_token_cookie_name, "", -1)
 }
