@@ -4,6 +4,7 @@ function write_cookie(name, value, expiryTimeInDays) {
     date.setTime(date.getTime() + (expiryTimeInDays*24*60*60*1000));
     let expires = "expires="+ date.toUTCString();
     document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    //rt=323423423423;expires=39420342000;path=/
 }
 
 //read the value for name = authentication_token
@@ -21,4 +22,8 @@ function read_cookie(name) {
         }
     }
     return "";
+}
+
+function redirect_to_homepage() {
+    window.location.href="./"
 }

@@ -11,7 +11,7 @@
     <script src="utils.js"></script>
 </head>
 <body>
-    <h2>Thanks for authorizing!! Here is the athlete's information: </h2>
+    <h2><span id="auth-flow"></span>Here is the athlete's information: </h2>
     <div id="data"></div>
     <script type="text/javascript">
 
@@ -32,6 +32,7 @@
                 const urlParams = new URLSearchParams(window.location.search)
                 const code = urlParams.get('code')
                 if(code) { // not null || not empty
+                    document.getElementById("auth-flow").innerHTML = "Thanks for authorizing!! "
                     //--------- STEP 2 ------
                     //Get Access_token from Strava
                     //////////////////////////
@@ -40,14 +41,21 @@
                         method: 'post'
                     })
                     .then(res => res.json())
+                    .catch(err => {
+                        consoleLog("Exception happeend: " + err)
+                    })
                     .then(res => {
                         write_cookie("at",res.access_token, access_token_expiry_in_days)
                         write_cookie("rt",res.refresh_token, refresh_token_expiry_in_days)
                         return res
                     })
                     .then(res => get_athlete_info(res.access_token))
+                    .catch(err => {
+                        consoleLog(err)
+                        redirect_to_homepage()
+                    })
                 } else { // no code even - so return to authorize_page
-                    window.location.href="./"
+                    redirect_to_homepage();
                 }
             } else { // refresh_token is available
                 let link=`https://www.strava.com/api/v3/oauth/token?client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}&grant_type=refresh_token`
@@ -55,13 +63,17 @@
                     method:'POST'
                 })
                 .then(res => res.json())
+                .catch(ex => consoleLog("Exception happened " + ex))
                 .then(res => {
                     write_cookie("at", res.access_token, access_token_expiry_in_days)
                     write_cookie("rt", res.refresh_token, refresh_token_expiry_in_days)
                     return res
                 })
                 .then(res => get_athlete_info(res.access_token))
-                .catch(ex => consoleLog("Exception happened " + ex))
+                .catch(ex => {
+                    consoleLog("Exception happened " + ex)
+                    redirect_to_homepage()
+                })
             }
         } else { // access_token is available
             get_athlete_info(token)
@@ -82,6 +94,10 @@
             })
             .then(res => res.json())
             .then(res => load_data(res))
+            .catch(error => {
+                consoleLog(error)
+                redirect_to_homepage()
+            })
         }
 
         //--------- STEP 4 ------
