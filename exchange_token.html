@@ -93,6 +93,10 @@
                 }
             })
             .then(res => res.json())
+            .then(res => {
+                console.log(res)
+                return res
+            })
             .then(res => load_data(res))
             .catch(error => {
                 consoleLog(error)
