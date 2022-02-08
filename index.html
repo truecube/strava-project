@@ -10,14 +10,22 @@
     <script src="settings.js"></script>
     <script src="utils.js"></script>
     <script type="text/javascript">
+
+        let refresh_token = read_cookie(refresh_token_cookie_name)
         let returnURL = "https://truecube.github.io/strava-project"
-        if(window.location.hostname == "localhost" || window.location.hostname == '127.0.0.1') {
-            returnURL = "http://localhost:"+window.location.port;
-        }
-        returnURL += "/exchange_token.html"
-        let link = `https://www.strava.com/oauth/authorize?client_id=${client_id}&response_type=code&redirect_uri=${returnURL}&approval_prompt=force&scope=activity:read_all`
         
+        if(refresh_token) {
+            window.location.href="./exchange_token.html"
+        } else {
+            
+            if(window.location.hostname == "localhost" || window.location.hostname == '127.0.0.1') {
+                returnURL = "http://localhost:"+window.location.port;
+            }
+            returnURL += "/exchange_token.html"    
+        }
+
         function to_strava() {
+            let link = `https://www.strava.com/oauth/authorize?client_id=${client_id}&response_type=code&redirect_uri=${returnURL}&approval_prompt=force&scope=activity:read_all`
             window.location.href=link
         }
     </script>
