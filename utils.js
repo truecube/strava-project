@@ -13,6 +13,14 @@ function write_cookie(name, value, expiryTimeInDays) {
     document.cookie = name + "=" + value + ";" + expires + ";path=/"
 }
 
+function write_to_local_storage(name, value) {
+    window.localStorage.setItem(name, value)
+}
+
+function read_from_local_storage(name) {
+    return window.localStorage.getItem(name)
+}
+
 //read the value for name = authentication_token
 function read_cookie(name) {
     name = name + "="
@@ -41,7 +49,7 @@ function get_athlete_activities(access_token, beforeDays, afterDays) {
     let before = Math.floor(getDate(beforeDays).getTime() / 1000)
     let after = Math.floor(getDate(afterDays).getTime() / 1000)
     let page = 1
-    let per_page = 30
+    let per_page = 100
 
     
     let link = `https://www.strava.com/api/v3/athlete/activities?before=${before}&after=${after}&page=${page}&per_page=${per_page}`
@@ -56,15 +64,26 @@ function get_athlete_activities(access_token, beforeDays, afterDays) {
     })
     .then(res => res.json())
     .then(res => {
-        consoleLog(res.errors)
         if(res.errors) {
             redirect_to_homepage()
         }
         return res
     })
-    .then(res => load_activities(res))
+    .then(res => {
+        write_to_local_storage(activity_cookie_name, JSON.stringify(res))
+        load_activities(res)
+    })
 }
 
 function load_activities(data) {
-    console.log(JSON.stringify(data));
+
+    $('#table').bootstrapTable({data: data})
+    console.log(data.length)
+    
+    for(let i = 0; i < data.length; i++) {
+        let cur_data = data[i]
+        console.log(cur_data.name, cur_data.distance, cur_data.start_date, cur_data.average_heartrate);
+    }
+    return data
+    //console.log(JSON.stringify(data));
 }

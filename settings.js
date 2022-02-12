@@ -12,8 +12,12 @@ const access_token_expiry_in_days=1
 
 const access_token_cookie_name = "at"
 const refresh_token_cookie_name = "rt"
+const activity_cookie_name = "act"
 
 const environment = "dev" // "stage", "beta", "prod"
+
+const default_activity_start_date=-100
+const default_activity_end_date=0
 
 function consoleLog(message) {
     if(environment == "prod") {
