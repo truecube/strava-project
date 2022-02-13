@@ -45,34 +45,43 @@ function redirect_to_homepage() {
 }
 
 function get_athlete_activities(access_token, beforeDays, afterDays) {
-
-    let before = Math.floor(getDate(beforeDays).getTime() / 1000)
-    let after = Math.floor(getDate(afterDays).getTime() / 1000)
-    let page = 1
-    let per_page = 100
-
+    let localActivities = read_from_local_storage(activity_cookie_name)
+    let lastFetchTime = read_from_local_storage(last_fetch_time_name)
+    let fiveHoursAfter = parseInt(lastFetchTime) + allowed_time_to_live_for_activities
     
-    let link = `https://www.strava.com/api/v3/athlete/activities?before=${before}&after=${after}&page=${page}&per_page=${per_page}`
-    console.log(link)
-    fetch(link, {
-        method:'GET',
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${access_token}`
-        }
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.errors) {
-            redirect_to_homepage()
-        }
-        return res
-    })
-    .then(res => {
-        write_to_local_storage(activity_cookie_name, JSON.stringify(res))
-        load_activities(res)
-    })
+    if(localActivities && fiveHoursAfter >= new Date().getTime()) {
+        localActivities = JSON.parse(localActivities)
+        load_activities(localActivities)
+    } else {
+        let before = Math.floor(getDate(beforeDays).getTime() / 1000)
+        let after = Math.floor(getDate(afterDays).getTime() / 1000)
+        let page = 1
+        let per_page = 100
+
+        
+        let link = `https://www.strava.com/api/v3/athlete/activities?before=${before}&after=${after}&page=${page}&per_page=${per_page}`
+        console.log(link)
+        fetch(link, {
+            method:'GET',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${access_token}`
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.errors) {
+                redirect_to_homepage()
+            }
+            return res
+        })
+        .then(res => {
+            write_to_local_storage(activity_cookie_name, JSON.stringify(res))
+            write_to_local_storage(last_fetch_time_name, new Date().getTime())
+            load_activities(res)
+        })
+    }
 }
 
 function load_activities(data) {

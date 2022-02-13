@@ -13,6 +13,12 @@ const access_token_expiry_in_days=1
 const access_token_cookie_name = "at"
 const refresh_token_cookie_name = "rt"
 const activity_cookie_name = "act"
+const last_fetch_time_name = "lft"
+
+const allowed_time_to_live_for_activities = 5 * 60 * 60 * 1000 //5 hours worth of milliseconds
+
+//1644708747804
+//1644708910
 
 const environment = "dev" // "stage", "beta", "prod"
 
