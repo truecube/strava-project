@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Activities</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+        const cachebuster = Math.round(new Date().getTime() / 1000);
+        document.write('<scr'+'ipt type="text/javascript" src="settings.js?cb=' +cachebuster+'"></scr' + 'ipt>');
+        document.write('<scr'+'ipt type="text/javascript" src="utils.js?cb=' +cachebuster+'"></scr' + 'ipt>');
+    </script>
+</head>
+<body>
+    <h2>Compare Activities: </h2>
+    <span class="dropdown">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          First Activity
+        </button>
+        <ul id="activity_list_1" class="dropdown-menu" aria-labelledby="dropdownMenuButton1"></ul>
+        <input type="hidden" id="activity_id_1" value=""/>
+    </span>
+    <span class="dropdown">
+        <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+          Compare with
+        </button>
+        <ul id="activity_list_2" class="dropdown-menu" aria-labelledby="dropdownMenuButton2"></ul>
+        <input type="hidden" id="activity_id_2" value=""/>
+    </span>
+    &nbsp;&nbsp;<button type="button" class="btn btn-primary btn-lg" onclick="do_comparison()">Compare</button>
+    <br/><br/>
+    <div id='compareContents'></div>
+    
+    <script type="text/javascript">
+        check_and_redirect_to_home_page(false, false)
+        load_activities_in_dropdown("activity_list_1")
+        load_activities_in_dropdown("activity_list_2")
+
+        function load_activities_in_dropdown(elementId) {
+            let activities = JSON.parse(localStorage.getItem(activity_cookie_name))
+            let innerHTML = "";
+            for(let i=0; i < activities.length; i++) {
+                let displayString = `${activities[i].name} on ${activities[i].start_date}`
+                innerHTML += `<li><a class="dropdown-item" onclick="alert_selected(${activities[i].id}, '${displayString}', '${elementId}')">${displayString}</a></li>`
+            }
+            document.getElementById(elementId).innerHTML = innerHTML
+        }
+
+        function alert_selected(id, displayString, elementId) {
+            if(elementId == "activity_list_1") {
+                $("#dropdownMenuButton1").html(displayString)
+                $("#activity_id_1").val(id)
+            } else {
+                $("#dropdownMenuButton2").html(displayString)
+                $("#activity_id_2").val(id)
+            }
+        }
+
+        function do_comparison() {
+            let activities = JSON.parse(localStorage.getItem(activity_cookie_name))
+            const activity_id_1 = $("#activity_id_1").val()
+            const activity_id_2 = $("#activity_id_2").val()
+            let activity_1
+            let activity_2
+            for(let i = 0; i < activities.length; i++) {
+                if(activities[i].id == activity_id_1) {
+                    activity_1 = activities[i]
+                } else if(activities[i].id == activity_id_2) {
+                    activity_2 = activities[i]
+                }
+            }
+
+            let displayString = "<table border='1'>"
+            let keys = ["name", "distance", "moving_time", "type", "start_date", "average_speed", "max_speed", "average_cadence", "average_heartrate", "max_heartrate"]
+            displayString += "<tr><th>Key</th><th>Activity 1</th><th>Activity 2</th></tr>"
+            for(let key in keys) {
+                let value = keys[key]
+                displayString += `<tr><th>${value}</th><td>${activity_1[value]}</td><td>${activity_2[value]}</td></tr>`
+            }
+            displayString += "</table>"
+            $("#compareContents").html(displayString)
+
+        }
+    </script>
+</body>
+</html>

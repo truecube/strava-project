@@ -21,6 +21,45 @@ function read_from_local_storage(name) {
     return window.localStorage.getItem(name)
 }
 
+function check_and_redirect_to_home_page(displayAthleteInfo, displayAthleteActivities) {
+    let at = read_cookie(access_token_cookie_name)
+    if(at) {
+        get_athlete_activities(at, default_activity_end_date, default_activity_start_date, false)
+        return true
+    } else {
+        let rt = read_cookie(refresh_token_cookie_name)
+        if(rt) {
+            work_with_refresh_token(rt, displayAthleteInfo, displayAthleteActivities)
+            return true
+        } else {
+            redirect_to_homepage()
+        }
+    }
+}
+
+function work_with_refresh_token(refresh_token, displayAthleteInfo, displayAthleteActivities) {
+    let link=`https://www.strava.com/api/v3/oauth/token?client_id=${client_id}&client_secret=${client_secret}&refresh_token=${refresh_token}&grant_type=refresh_token`
+    fetch(link, {
+        method:'POST'
+    })
+    .then(res => res.json())
+    .catch(ex => consoleLog("Exception happened " + ex))
+    .then(res => {
+        write_cookie(access_token_cookie_name, res.access_token, access_token_expiry_in_days)
+        write_cookie(refresh_token_cookie_name, res.refresh_token, refresh_token_expiry_in_days)
+        return res
+    })
+    .then(res => {
+        get_athlete_info(res.access_token, displayAthleteInfo)
+        get_athlete_activities(res.access_token, default_activity_end_date, default_activity_start_date, displayAthleteActivities)
+    })
+    .catch(ex => {
+        consoleLog("Exception happened " + ex)
+        redirect_to_homepage()
+    })
+
+}
+
 //read the value for name = authentication_token
 function read_cookie(name) {
     name = name + "="
@@ -41,10 +80,53 @@ function read_cookie(name) {
 function redirect_to_homepage() {
     write_cookie(refresh_token_cookie_name, "", -1)
     write_cookie(access_token_cookie_name, "", -1)
+    localStorage.clear()
     window.location.href="./"
 }
 
-function get_athlete_activities(access_token, beforeDays, afterDays) {
+
+function get_athlete_info(access_token, display) {
+    let link="https://www.strava.com/api/v3/athlete"
+    fetch(link, {
+        method:'GET',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`
+        }
+    })
+    .then(res => res.json())
+    .then(res => {
+        consoleLog(res.errors)
+        if(res.errors) {
+            redirect_to_homepage()
+        }
+        return res
+    })
+    .then(res => {
+        if(display) {
+            load_data(res)
+        }
+    })
+    .catch(error => {
+        consoleLog(error)
+        redirect_to_homepage()
+    })
+}
+
+function load_data(data) {
+    let dataHTML = "<table>"
+    dataHTML += `<tr><th>FirstName</th><td>${data.firstname}</td></tr>`
+    dataHTML += `<tr><th>LastName</th><td>${data.lastname}</td></tr>`
+    dataHTML += `<tr><th>Gender</th><td>${data.sex}</td></tr>`
+    dataHTML += `<tr><th>City</th><td>${data.city}</td></tr>`
+    dataHTML += `<tr><th>State</th><td>${data.state}</td></tr>`
+    dataHTML += `<tr><th>ProfilePic</th><td><img src='${data.profile}'/></td></tr>`
+    dataHTML += `</table>`
+    document.getElementById('athelete_info').innerHTML = dataHTML
+}
+
+function get_athlete_activities(access_token, beforeDays, afterDays, display) {
     let localActivities = read_from_local_storage(activity_cookie_name)
     let lastFetchTime = read_from_local_storage(last_fetch_time_name)
     let fiveHoursAfter = parseInt(lastFetchTime) + allowed_time_to_live_for_activities
@@ -79,20 +161,31 @@ function get_athlete_activities(access_token, beforeDays, afterDays) {
         .then(res => {
             write_to_local_storage(activity_cookie_name, JSON.stringify(res))
             write_to_local_storage(last_fetch_time_name, new Date().getTime())
-            load_activities(res)
+            if(display) {
+                load_activities(res)
+            }
         })
     }
 }
 
 function load_activities(data) {
-
-    $('#table').bootstrapTable({data: data})
-    console.log(data.length)
-    
-    for(let i = 0; i < data.length; i++) {
-        let cur_data = data[i]
-        console.log(cur_data.name, cur_data.distance, cur_data.start_date, cur_data.average_heartrate);
-    }
+    $('#table').bootstrapTable({
+        data: data,
+        pagination: true,
+        search: true,
+        columns: [{
+          field: 'name',
+          title: 'Name'
+        }, {
+          field: 'distance',
+          title: 'Distance'
+        }, {
+          field: 'start_date',
+          title: 'Start Date'
+        }, {
+            field: 'average_heartrate',
+            title: 'Average Heart Rate'
+        }]
+      })
     return data
-    //console.log(JSON.stringify(data));
 }
