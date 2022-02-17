@@ -10,7 +10,7 @@ function load_activities_in_dropdown(elementId) {
     let activities = JSON.parse(localStorage.getItem(activity_cookie_name))
     let innerHTML = "";
     for(let i=0; i < activities.length; i++) {
-        let displayString = `${activities[i].name} on ${activities[i].start_date}`
+        let displayString = `${activities[i].name} on ` + new Date(activities[i].start_date).toLocaleString()
         innerHTML += `<li><a class="dropdown-item" onclick="set_selected(${activities[i].id}, '${displayString}', '${elementId}')">${displayString}</a></li>`
     }
     document.getElementById(elementId).innerHTML = innerHTML
@@ -43,13 +43,30 @@ function do_comparison() {
 
     }
 
-    let displayString = "<table border='1'>"
     let keys = ["name", "distance", "moving_time", "type", "start_date", "average_speed", "max_speed", "average_cadence", "average_heartrate", "max_heartrate"]
-    displayString += "<tr><th>Key</th><th>Activity 1</th><th>Activity 2</th></tr>"
+    let data = []
     for(let key in keys) {
         let value = keys[key]
-        displayString += `<tr><th>${value}</th><td>${activity_1[value]}</td><td>${activity_2[value]}</td></tr>`
+        data.push({
+            "key": `${value}`,
+            "activity_1": `${activity_1[value]}`,
+            "activity_2": `${activity_2[value]}`
+        })
     }
-    displayString += "</table>"
-    $("#compareContents").html(displayString)
+    $('#compareTable').bootstrapTable({
+        data: data,
+        columns: [{
+          field: 'key',
+          title: 'Key',
+          formatter: formatName
+        }, {
+          field: 'activity_1',
+          title: 'Activity 1',
+          formatter: formatColumns
+        }, {
+          field: 'activity_2',
+          title: 'Activity 2',
+          formatter: formatColumns
+        }]
+      })
 }

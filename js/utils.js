@@ -174,17 +174,59 @@ function load_activities(data) {
         search: true,
         columns: [{
           field: 'name',
-          title: 'Name'
+          title: 'Name',
+          formatter: formatName
         }, {
           field: 'distance',
-          title: 'Distance'
+          title: 'Distance',
+          formatter: formatDistance
         }, {
           field: 'start_date',
-          title: 'Start Date'
+          title: 'Start Date',
+          formatter: formatDate
         }, {
             field: 'average_heartrate',
-            title: 'Average Heart Rate'
+            title: 'Average Heart Rate',
+            formatter: formatHeartRate
         }]
       })
     return data
+}
+
+function formatHeartRate(value) {
+    return Math.floor(value) + " bpm"
+}
+
+function formatDistance(value) {
+    return (value * 0.000621371192).toFixed(2) + " miles"
+}
+
+function formatTime(valueInSeconds) {
+    return Math.floor(valueInSeconds / 60) + " minutes"
+}
+
+function formatDate(value) {
+    return new Date(value).toLocaleString()
+}
+
+function formatName(value) {
+    value = value[0].toUpperCase() + value.substring(1);
+    return value.replace("_", " ")
+}
+
+function formatColumns(value, row) {
+    console.log(`I am called ${row.name}`)
+    if(row.key == "distance") {
+        return formatDistance(value)
+    } else if(row.key == "average_heartrate" || row.key == "max_heartrate") {
+        return formatHeartRate(value)
+    } else if(row.key == "moving_time") {
+        return formatTime(value)
+    } else if(row.key == "start_date") {
+        return formatDate(value)
+    } else if(row.key == "average_cadence") {
+        return Math.floor(value * 2) + " spm"
+    } else {
+        return value
+    }
 }
