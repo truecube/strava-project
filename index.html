@@ -11,8 +11,8 @@
     <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
     <script type="text/javascript">
         const cachebuster = Math.round(new Date().getTime() / 1000);
-        document.write('<scr'+'ipt type="text/javascript" src="settings.js?cb=' +cachebuster+'"></scr' + 'ipt>');
-        document.write('<scr'+'ipt type="text/javascript" src="utils.js?cb=' +cachebuster+'"></scr' + 'ipt>');
+        document.write('<scr'+'ipt type="text/javascript" src="js/settings.js?cb=' +cachebuster+'"></scr' + 'ipt>');
+        document.write('<scr'+'ipt type="text/javascript" src="js/utils.js?cb=' +cachebuster+'"></scr' + 'ipt>');
     </script>
     <script type="text/javascript">
 
@@ -20,13 +20,13 @@
         let returnURL = "https://truecube.github.io/strava-project"
 
         if(refresh_token) {
-            window.location.href="./exchange_token.html"
+            window.location.href="./dashboard.html"
         } else {
             
             if(window.location.hostname == "localhost" || window.location.hostname == '127.0.0.1') {
                 returnURL = "http://localhost:"+window.location.port;
             }
-            returnURL += "/exchange_token.html"    
+            returnURL += "/dashboard.html"    
         }
 
         function to_strava() {

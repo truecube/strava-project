@@ -57,7 +57,6 @@ function work_with_refresh_token(refresh_token, displayAthleteInfo, displayAthle
         consoleLog("Exception happened " + ex)
         redirect_to_homepage()
     })
-
 }
 
 //read the value for name = authentication_token
