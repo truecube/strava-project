@@ -7,9 +7,12 @@
     <title>Token Exchange</title>
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+    
     <script type="text/javascript">
         const cachebuster = Math.round(new Date().getTime() / 1000);
         document.write('<scr'+'ipt type="text/javascript" src="js/settings.js?cb=' +cachebuster+'"></scr' + 'ipt>');
@@ -17,6 +20,7 @@
     </script>
 </head>
 <body>
+    
     <!-- TABS -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
@@ -32,7 +36,7 @@
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="compare-tab" data-bs-toggle="tab" data-bs-target="#compare" type="button" role="tab" aria-controls="compare" aria-selected="false">
+                        <a class="nav-link" id="compare-tab" onclick="checkAndLoad()" data-bs-toggle="tab" data-bs-target="#compare" type="button" role="tab" aria-controls="compare" aria-selected="false">
                             Compare Activities
                         </a>
                     </li>
@@ -55,20 +59,13 @@
         </div>
         <div class="tab-pane fade" id="compare" role="tabpanel" aria-labelledby="compare-tab">
             <h4>Choose Activities to compare: </h4>
-            <span class="dropdown">
-                <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                First Activity
-                </button>
-                <ul id="activity_list_1" class="dropdown-menu" aria-labelledby="dropdownMenuButton1"></ul>
-                <input type="hidden" id="activity_id_1" value=""/>
-            </span>
-            <span class="dropdown">
-                <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                Compare with
-                </button>
-                <ul id="activity_list_2" class="dropdown-menu" aria-labelledby="dropdownMenuButton2"></ul>
-                <input type="hidden" id="activity_id_2" value=""/>
-            </span>
+            
+            <input class="form-control" style="width: 30%!important;display: inline;" list="activity_list_1" id="activity_1" placeholder="select an activity..">
+            <datalist id="activity_list_1"></datalist>
+        
+            <input class="form-control" style="width: 30%!important;display: inline;" list="activity_list_2" id="activity_2" placeholder="select an activity..">
+            <datalist id="activity_list_2"></datalist>
+            
             &nbsp;&nbsp;
             <button type="button" class="btn btn-primary btn-lg" onclick="do_comparison()">Compare</button>
             <br/><br/>

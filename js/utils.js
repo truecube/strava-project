@@ -215,7 +215,6 @@ function formatName(value) {
 }
 
 function formatColumns(value, row) {
-    console.log(`I am called ${row.name}`)
     if(row.key == "distance") {
         return formatDistance(value)
     } else if(row.key == "average_heartrate" || row.key == "max_heartrate") {
