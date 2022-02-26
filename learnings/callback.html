@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallBack</title>
+</head>
+<body>
+
+    <script>
+        let posts = [
+            {title: 'Post One', body: 'This is post one'}, // 0
+            {title: 'Post Two', body: 'This is post two'}  // 1
+        ]
+
+        function createPost(post, callback) {
+            setTimeout(() => {
+                posts.push(post)
+                callback()
+            }, 5000)
+        }
+
+        function getPosts() {
+            setTimeout(() => {
+                let output = ""
+                posts.forEach((vidya)=> {
+                    output += `<li>${vidya.title}</li>`
+                })
+                document.body.innerHTML = output
+             }, 1000)
+        }
+
+        let post = {title: 'Post Three', body: 'This is post three'}
+        createPost(post, getPosts)
+        getPosts()
+    </script>
+
+    
+</body>
+</html>

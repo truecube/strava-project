@@ -5,13 +5,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Date Functions</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
         let date = new Date();
         date.setTime(date.getTime() - (30*24*60*60*1000));
         console.log(Math.floor(date.getTime()/1000))
+
+        function logName(name = "default") {
+            console.log(name)
+        }
+        logName("Yuva DaGreat")
+        logName()
     </script>
 </head>
 <body>
+
+    <!-- https://www.strava.com/activities/6701696372
+    https://www.strava.com/activities/6692202220 -->
+
+    <div id="topBar">
+        <a href ="#" id="load_home"> HOME </a>
+    </div>
+    <div id ="content">        
+    </div>
+    
+    <script>
+    $(document).ready( function() {
+        $("#load_home").on("click", function() {
+            $("#content").load("https://www.strava.com/activities/6701696372/embed/11003bc34ee4ebf75d40c08d0d8a36ae0850378c");
+        });
+    });
+    </script>
+
+
+    <!-- <iframe height='405' width='590' frameborder='0' allowtransparency='true' scrolling='no' src='https://www.strava.com/activities/6692202220/embed/333296254c35261f62709f945addb8f5c276b7f1'></iframe>
+    <iframe height='405' width='590' frameborder='0' allowtransparency='true' scrolling='no' src='https://www.strava.com/activities/6701696372/embed/11003bc34ee4ebf75d40c08d0d8a36ae0850378c'></iframe>
+    <iframe height='454' width='300' frameborder='0' allowtransparency='true' scrolling='no' src='https://www.strava.com/athletes/15170950/latest-rides/5e151711c95ac74bf0301a87972ffdecc7e325b7'></iframe>
+    <iframe src="https://www.strava.com/activities/6701696372"></iframe> -->
     
 </body>
 </html>

@@ -122,15 +122,18 @@ function load_data(data) {
     dataHTML += `<tr><th>State</th><td>${data.state}</td></tr>`
     dataHTML += `<tr><th>ProfilePic</th><td><img src='${data.profile}'/></td></tr>`
     dataHTML += `</table>`
-    document.getElementById('athelete_info').innerHTML = dataHTML
+    $('#athelete_info').html(dataHTML)
 }
 
-function get_athlete_activities(access_token, beforeDays, afterDays, display) {
+function get_athlete_activities(access_token, beforeDays, afterDays, display, isForceFetch=false) {
+    if(access_token == "") {
+        access_token = read_cookie(access_token_cookie_name)
+    }
     let localActivities = read_from_local_storage(activity_cookie_name)
     let lastFetchTime = read_from_local_storage(last_fetch_time_name)
     let fiveHoursAfter = parseInt(lastFetchTime) + allowed_time_to_live_for_activities
     
-    if(localActivities && fiveHoursAfter >= new Date().getTime()) {
+    if(isForceFetch == false && localActivities && fiveHoursAfter >= new Date().getTime()) {
         localActivities = JSON.parse(localActivities)
         load_activities(localActivities)
     } else {
@@ -139,7 +142,6 @@ function get_athlete_activities(access_token, beforeDays, afterDays, display) {
         let page = 1
         let per_page = 100
 
-        
         let link = `https://www.strava.com/api/v3/athlete/activities?before=${before}&after=${after}&page=${page}&per_page=${per_page}`
         console.log(link)
         fetch(link, {
@@ -168,6 +170,7 @@ function get_athlete_activities(access_token, beforeDays, afterDays, display) {
 }
 
 function load_activities(data) {
+    $('#table').bootstrapTable("destroy")
     $('#table').bootstrapTable({
         data: data,
         pagination: true,
