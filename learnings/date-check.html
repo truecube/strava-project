@@ -36,14 +36,14 @@
         }
 
         function isInterested(month, date, day) {
-            if(month <= 6) {
-                if(month == 6 && date > 22) {
-                    return false
-                } else if(day == "Sat" || day == "Sun") {
-                    return true
-                } else if(month == '04' && (date >= 11 && date <= 15)) {
-                    return true
-                }
+            if(month >= 5) {
+                return false
+            } else if(month == '04' && (date == '11' || date == '12' || date == '13' || date == '14' || date == '15')) {
+                return true
+            } else if(month == '03' && (date == '03' || date == '04')){
+                return true
+            } else if(day == "Sat" || day == "Sun") {
+                return true
             }
             return false
         }
