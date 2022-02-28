@@ -10,9 +10,9 @@
     <span id="cards"></span>
     <script>
         let locations = [
-            {loc:5444, 'name':'Newark'},
-            {loc:5140, 'name':'JFK-NY'},
-            {loc:6480, 'name':'Bowling-NY'}
+            {loc:5444, 'name':'Newark'}
+            ,{loc:5140, 'name':'JFK-NY'}
+            ,{loc:6480, 'name':'Bowling-NY'}
         ]
         setupCards()
 
@@ -36,16 +36,11 @@
         }
 
         function isInterested(month, date, day) {
-            if(month >= 5) {
-                return false
-            } else if(month == '04' && (date == '11' || date == '12' || date == '13' || date == '14' || date == '15')) {
-                return true
-            } else if(month == '03' && (date == '03' || date == '04')){
-                return true
-            } else if(day == "Sat" || day == "Sun") {
-                return true
-            }
-            return false
+            const aprilDates = ['09', '10', '11', '12', '13', '14', '15', '16', '17']
+            const marchDates = ['12', '13', '27']
+            return (month == '02' && day == '27') 
+                    || (month == '03' && marchDates.includes(date)) 
+                    || (month == '04' && aprilDates.includes(date))
         }
 
         function getDetails(locationId, spanId) {
