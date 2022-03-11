@@ -77,10 +77,10 @@ function read_cookie(name) {
 }
 
 function redirect_to_homepage() {
-    write_cookie(refresh_token_cookie_name, "", -1)
-    write_cookie(access_token_cookie_name, "", -1)
-    localStorage.clear()
-    window.location.href="./"
+    // write_cookie(refresh_token_cookie_name, "", -1)
+    // write_cookie(access_token_cookie_name, "", -1)
+    // localStorage.clear()
+    // window.location.href="./"
 }
 
 
@@ -125,7 +125,7 @@ function load_data(data) {
     $('#athelete_info').html(dataHTML)
 }
 
-function get_athlete_activities(access_token, beforeDays, afterDays, display, isForceFetch=false) {
+async function get_athlete_activities(access_token, beforeDays, afterDays, display, isForceFetch=false) {
     if(access_token == "") {
         access_token = read_cookie(access_token_cookie_name)
     }
@@ -140,33 +140,36 @@ function get_athlete_activities(access_token, beforeDays, afterDays, display, is
         let before = Math.floor(getDate(beforeDays).getTime() / 1000)
         let after = Math.floor(getDate(afterDays).getTime() / 1000)
         let page = 1
-        let per_page = 100
+        let currentTotal = 100;
+        let activities = []
 
-        let link = `https://www.strava.com/api/v3/athlete/activities?before=${before}&after=${after}&page=${page}&per_page=${per_page}`
-        console.log(link)
-        fetch(link, {
-            method:'GET',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${access_token}`
-            }
-        })
-        .then(res => res.json())
-        .then(res => {
-            if(res.errors) {
-                redirect_to_homepage()
-            }
-            return res
-        })
-        .then(res => {
-            write_to_local_storage(activity_cookie_name, JSON.stringify(res))
-            write_to_local_storage(last_fetch_time_name, new Date().getTime())
-            if(display) {
-                load_activities(res)
-            }
-        })
+        while(currentTotal >= 100 && page < 10) {
+            let res = await fetch_activities(access_token, before, after, page)
+            let curActivities = await res.json()
+            activities = activities.concat(curActivities)
+            currentTotal = curActivities.length
+            page = page + 1
+        }
+        write_to_local_storage(activity_cookie_name, JSON.stringify(activities))
+        write_to_local_storage(last_fetch_time_name, new Date().getTime())
+        if(display) {
+            load_activities(activities)
+        }
     }
+}
+
+function fetch_activities(access_token, before, after, page) {
+    let link = `https://www.strava.com/api/v3/athlete/activities?before=${before}&after=${after}&page=${page}&per_page=100`
+    console.log(link)
+    let p = fetch(link, {
+        method:'GET',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`
+        }
+    })
+    return p
 }
 
 function load_activities(data) {
@@ -213,8 +216,10 @@ function formatDate(value) {
 }
 
 function formatName(value) {
-    value = value[0].toUpperCase() + value.substring(1);
-    return value.replace("_", " ")
+    if(value) {
+        value = value[0].toUpperCase() + value.substring(1);
+        return value.replace("_", " ")
+    }
 }
 
 function formatColumns(value, row) {

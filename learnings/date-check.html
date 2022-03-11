@@ -11,8 +11,8 @@
     <script>
         let locations = [
             {loc:5444, 'name':'Newark'}
-            ,{loc:5140, 'name':'JFK-NY'}
-            ,{loc:6480, 'name':'Bowling-NY'}
+            // ,{loc:5140, 'name':'JFK-NY'}
+            // ,{loc:6480, 'name':'Bowling-NY'}
         ]
         setupCards()
 
@@ -35,9 +35,17 @@
             return num < 10? '0'+num : num
         }
 
+        /**
+         * 
+         * EWR: Adhithya: Sat Apr 11th 11:30PM
+         * EWR: Arjun:    Sat Mar 12th 3:30AM
+         * EWR: Vidya:    Sun Mar 27th 4:15PM
+         * EWR: Yuva:     Sun Mar 13th 8:15AM 
+         * 
+         */
         function isInterested(month, date, day) {
             const aprilDates = ['09', '10', '11', '12', '13', '14', '15', '16', '17']
-            const marchDates = ['12', '13', '27']
+            const marchDates = ['03','04','12', '13', '27']
             return (month == '02' && day == '27') 
                     || (month == '03' && marchDates.includes(date)) 
                     || (month == '04' && aprilDates.includes(date))
